@@ -580,8 +580,3 @@ return phoneUtil.isValidNumber(parsedNumber)
 } catch (error) {
 return false
 }}
-
-async function joinChannels(conn) {
-for (const channelId of Object.values(global.ch)) {
-await conn.newsletterFollow(channelId).catch(() => {})
-}}
