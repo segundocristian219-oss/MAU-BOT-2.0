@@ -1,104 +1,71 @@
-import { getContentType, generateForwardMessageContent, generateWAMessageFromContent } from '@whiskeysockets/baileys';
+import fetch from 'node-fetch'
+import { sticker } from '../lib/sticker.js'
 
-global.delete = global.delete || [];
+let handler = m => m
 
+handler.all = async function (m, { conn }) {
+  let user = global.db.data.users[m.sender]
+  let chat = global.db.data.chats[m.chat]
 
-export async function before(m, { conn, isAdmin }) {
-    if (isAdmin) return; 
-    if (!m.isGroup) return; 
-    if (m.key.fromMe) return; 
-    const res = await fetch('https://files.catbox.moe/d2np6v.jpg')
-    const thumb3 = Buffer.from(await res.arrayBuffer())
+const res = await fetch(`${kirito}/media/images/87411733_k.jpg`);
+  const thumb2 = Buffer.from(await res.arrayBuffer());
+const userJid = m.sender;
 
-    let chat = global.db.data.chats[m.chat];
-
-    if (chat.delete) {
-        if (global.delete.length > 500) global.delete = []; 
-
-
-        if (m.type !== 'protocolMessage' && m.key && m.message) {
-            global.delete.push({ key: m.key, message: m.message });
-        }
-
-
-        if (m?.message?.protocolMessage) {
-            let msg = global.delete.find(x => x.key.id === m.message.protocolMessage.key.id);
-
-            if (msg) {
-
-             let quoted = {
-    key: msg.key,
+  const fkontak = {
+    key: { fromMe: false, participant: userJid },
     message: {
-        imageMessage: {
-            mimetype: 'image/jpeg',
-            caption: '《✧》Este usuario eliminó un mensaje.',
-            jpegThumbnail: thumb3 
-        }
+      imageMessage: {
+        mimetype: 'image/jpeg',
+        caption: '𝗥𝗘𝗦𝗣𝗨𝗘𝗦𝗧𝗔 > 𝗕𝗢𝗧',
+        jpegThumbnail: thumb2
+      }
     }
-};
+  };
 
+  m.isBot = m.id.startsWith('BAE5') && m.id.length === 16 
+          || m.id.startsWith('3EB0') && (m.id.length === 12 || m.id.length === 20 || m.id.length === 22) 
+          || m.id.startsWith('B24E') && m.id.length === 20
+  if (m.isBot) return 
 
-                await sendMessageForward(msg, {
-                    client: conn,
-                    from: m.chat,
-                    isReadOneView: true,
-                    viewOnce: false,
-                    quoted
-                });
+  let prefixRegex = new RegExp('^[' + (opts?.prefix || '‎z/i!#$%+£¢€¥^°=¶∆×÷π√✓©®:;?&.,\\-').replace(/[|\\{}()[\]^$+*?.\-\^]/g, '\\$&') + ']')
+  if (prefixRegex.test(m.text)) return true
 
+  if (m.sender?.toLowerCase().includes('bot')) return true
 
-                let index = global.delete.indexOf(msg);
-                if (index !== -1) global.delete.splice(index, 1);
-            }
-        }
+  if (!chat.isBanned && chat.autoresponder) {
+    if (m.fromMe) return
+
+    let query = m.text || ''
+    let username = m.pushName || 'Usuario'
+
+    let isOrBot = /bot/i.test(query)
+    let isReply = m.quoted && m.quoted.sender === this.user.jid
+        let isMention = m.mentionedJid && m.mentionedJid.includes(this.user.jid) 
+
+    if (!(isOrBot || isReply || isMention)) return
+
+    await this.sendPresenceUpdate('composing', m.chat)
+
+    let txtDefault = `
+Eres ${botname}, una inteligencia artificial avanzada creada por ${etiqueta} para WhatsApp. Tu propósito es brindar respuestas claras, pero con una actitud empática y comprensiva.
+`.trim()
+
+    let logic = chat.sAutoresponder ? chat.sAutoresponder : txtDefault
+
+    try {
+      const apiUrl = `https://g-mini-ia.vercel.app/api/mode-ia?prompt=${encodeURIComponent(query)}&id=${encodeURIComponent(username)}&logic=${encodeURIComponent(logic)}`
+      const res = await fetch(apiUrl)
+      const data = await res.json()
+      let result = data.result || data.answer || data.response || null
+      if (result && result.trim().length > 0) {
+        await this.reply(m.chat, result, fkontak, rcanal)
+      }
+    } catch (e) {
+      console.error(e)
+      await this.reply(m.chat, '⚠️ Ocurrió un error con la IA.', m)
     }
+  }
+  return true
 }
 
-/**
- * Reenvía un mensaje preservando metadatos y menciones
- * @param {Object} msg - Mensaje original
- * @param {Object} opts - Opciones
- */
-async function sendMessageForward(msg, opts = {}) {
-    let originalType = getContentType(msg.message);
-    let forwardContent = await generateForwardMessageContent(msg, { forwardingScore: true });
-    let forwardType = getContentType(forwardContent);
-
-
-    if (opts.text) {
-        if (forwardType === 'conversation') {
-            forwardContent[forwardType] = opts.text;
-        } else if (forwardType === 'extendedTextMessage') {
-            forwardContent[forwardType].text = opts.text;
-        } else {
-            forwardContent[forwardType].caption = opts.text;
-        }
-    }
-
-
-    if (opts.isReadOneView) {
-        forwardContent[forwardType].viewOnce = opts.viewOnce;
-    }
-
-
-    forwardContent[forwardType].contextInfo = {
-        ...(msg.message[originalType]?.contextInfo || {}),
-        ...(opts.mentions ? { mentionedJid: opts.mentions } : {}),
-        isForwarded: opts.forward || true,
-        remoteJid: opts.remote || null
-    };
-
-
-    let newMsg = await generateWAMessageFromContent(opts.from, forwardContent, {
-        userJid: opts.client.user.id,
-        quoted: opts.quoted || msg
-    });
-
-    await opts.client.relayMessage(
-        opts.from,
-        newMsg.message,
-        { messageId: newMsg.key.id }
-    );
-
-    return newMsg;
-}
+export default handler
