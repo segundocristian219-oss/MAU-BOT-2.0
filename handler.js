@@ -7,12 +7,12 @@ import chalk from "chalk"
 import fetch from "node-fetch"
 import ws from "ws"
 
+const strRegex = str => str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")
+
 const ___dirname = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   "plugins"
 )
-
-const strRegex = str => str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")
 
 const isNumber = x => typeof x === "number" && !isNaN(x)
 const delay = ms => isNumber(ms) && new Promise(r => setTimeout(r, ms))
