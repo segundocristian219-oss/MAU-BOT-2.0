@@ -42,11 +42,15 @@ export async function handler(chatUpdate) {
 
   try {
     m = smsg(this, m) || m
-    if (!m) return
+if (!m) return
 
-    if (quotedOriginal) {
-      m.quoted = quotedOriginal
-    }
+if (m.quoted) {
+  Object.defineProperty(m, '_quoted', {
+    value: smsg(this, m.quoted),
+    enumerable: false,
+    configurable: true
+  })
+}
 
     try {
       const user = global.db.data.users[m.sender]
