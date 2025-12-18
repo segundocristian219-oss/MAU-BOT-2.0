@@ -201,21 +201,13 @@ export async function handler(chatUpdate) {
       if (!opts["restrict"])
         if (plugin.tags && plugin.tags.includes("admin")) continue
 
-      const pluginPrefix = plugin.customPrefix || null
-      const match = pluginPrefix
-        ? (
-            pluginPrefix instanceof RegExp
-              ? [[pluginPrefix.exec(m.text), pluginPrefix]]
-              : Array.isArray(pluginPrefix)
-                ? pluginPrefix.map(prefix => {
-                    const regex = prefix instanceof RegExp ? prefix : new RegExp(strRegex(prefix))
-                    return [regex.exec(m.text), regex]
-                  })
-                : typeof pluginPrefix === "string"
-                  ? [[new RegExp(strRegex(pluginPrefix)).exec(m.text), new RegExp(strRegex(pluginPrefix))]]
-                  : [[[], new RegExp]]
-          ).find(prefix => prefix[1])
-        : [[[""], null]]
+      // ===========================
+      // Prefijo fijo "."
+      // ===========================
+      const prefix = "."
+      const match = m.text.startsWith(prefix)
+        ? [[m.text.slice(prefix.length).split(" ")[0], prefix]]
+        : [[[], null]]
 
       if (typeof plugin.before === "function") {
         if (await plugin.before.call(this, m, {
@@ -242,8 +234,8 @@ export async function handler(chatUpdate) {
 
       if (typeof plugin !== "function") continue
 
-      if ((usedPrefix = (match[0] || "")[0] || "")) {
-        const noPrefix = m.text.replace(usedPrefix, "")
+      if ((usedPrefix = (match[0] || "")[1] || "")) {
+        const noPrefix = m.text.slice(usedPrefix.length)
         let [command, ...args] = noPrefix.trim().split(" ").filter(v => v)
         let _args = noPrefix.trim().split(" ").slice(1)
         let text = _args.join(" ")
