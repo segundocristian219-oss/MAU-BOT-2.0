@@ -92,7 +92,7 @@ async function sendAudio(conn, job, asDocument, triggerMsg) {
 function safeBaseFromTitle(title) {
   return String(title || "spotify")
     .slice(0, 70)
-    .replace(/[^A-Za-z0-9_-.]+/g, "_");
+    .replace(/[^A-Za-z0-9_.-]+/g, "_");
 }
 
 module.exports = async (msg, { conn, args, command }) => {
@@ -206,4 +206,4 @@ module.exports = async (msg, { conn, args, command }) => {
   }
 };
 
-handler.command = ["sp"]
+handler.command = ["sp"];
