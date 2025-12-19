@@ -206,3 +206,4 @@ const handler = async (msg, { conn, wa }) => {
 };
 
 handler.command = ["sp"];
+export default handler;
