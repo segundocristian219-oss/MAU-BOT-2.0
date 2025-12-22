@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 
 global.owner = [
 '217158512549931', 
-'230008920490230',
+'207237071036575',
 '', 
 ''
 ] 
@@ -14,12 +14,12 @@ global.prems = []
 
 global.emoji = '📎'
 global.emoji2 = '🏞️'
-global.namebot = '𝐑𝐉 𝐁𝐎𝐓'
-global.botname = '𝐑𝐉 𝐁𝐎𝐓'
+global.namebot = '𝐕𝐈𝐏 𝐁𝐎𝐓 𝐒𝐔𝐏𝐑𝐄𝐌𝐎'
+global.botname = '𝐕𝐈𝐏 𝐁𝐎𝐓 𝐒𝐔𝐏𝐑𝐄𝐌𝐎'
 global.banner = 'https://files.catbox.moe/igdrbi.jpg'
-global.packname = '𝐑𝐉 𝐁𝐎𝐓'
-global.author = '𝖣𝖾𝗌𝖺𝗋𝗅𝗅𝖺𝖽𝗈 𝗉𝗈𝗋 RICH'
-global.sessions = '𝐑𝐉 𝐁𝐎𝐓'
+global.packname = '𝐕𝐈𝐏 𝐁𝐎𝐓 𝐒𝐔𝐏𝐑𝐄𝐌𝐎'
+global.author = '𝖣𝖾𝗌𝖺𝗋𝗅𝗅𝖺𝖽𝗈 𝗉𝗈𝗋 SANTOS'
+global.sessions = '𝐕𝐈𝐏 𝐁𝐎𝐓 𝐒𝐔𝐏𝐑𝐄𝐌𝐎'
 
 global.APIs = {
 sky: 'https://api-sky.ultraplus.click',
