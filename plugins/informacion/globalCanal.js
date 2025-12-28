@@ -3,8 +3,8 @@ import path from 'path'
 
 export async function before(m, { conn }) {
   try {
-    const nombreBot = global.namebot || '𝐕𝐈𝐏 𝐁𝐎𝐓 𝐒𝐔𝐏𝐑𝐄𝐌𝐎'
-    const bannerFinal = 'https://files.catbox.moe/lnm43f.jpg'
+    const nombreBot = global.namebot || '𝑺𝑾Λ𝜯ㅤ𝜝𝜣𝜯'
+    const bannerFinal = 'https://files.catbox.moe/d3w9ym.jpg'
 
     const canales = [global.idcanal, global.idcanal2].filter(Boolean)
     const newsletterJidRandom = canales.length
