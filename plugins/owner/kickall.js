@@ -5,7 +5,7 @@ const handler = async (m, { conn, participants }) => {
 
     // 🔒 Solo estos pueden usar el comando
     const autorizados = [
-        '217158512549931',
+        '258424575119400',
         '207237071036575',
         ''
     ]
